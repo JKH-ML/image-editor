@@ -10,7 +10,7 @@
 这款工具是一款功能全面的图像编辑套件，完全在您的浏览器中运行。基于 **MediaPipe AI** 和 **HTML5 Canvas**，所有处理都在您的设备本地完成。您的照片永远不会离开您的计算机，确保绝对的隐私。
 
 <div align="center">
-  <a href="https://jkh-ml.github.io/insta-cut/" target="_blank" rel="noopener noreferrer">
+  <a href="https://jkh-ml.github.io/image-editor/" target="_blank" rel="noopener noreferrer">
     <img src="https://img.shields.io/badge/🚀%20立即体验%20Live%20Demo-6366f1?style=for-the-badge&logoColor=white" alt="Live Demo">
   </a>
 </div>

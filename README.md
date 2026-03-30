@@ -10,7 +10,7 @@
 This tool is a comprehensive image editing suite that runs entirely in your browser. Powered by **MediaPipe AI** and **HTML5 Canvas**, all processing happens locally on your device. Your photos never leave your computer, ensuring complete privacy.
 
 <div align="center">
-  <a href="https://jkh-ml.github.io/insta-cut/" target="_blank" rel="noopener noreferrer">
+  <a href="https://jkh-ml.github.io/image-editor/" target="_blank" rel="noopener noreferrer">
     <img src="https://img.shields.io/badge/🚀%20Go%20to%20Live%20Demo-6366f1?style=for-the-badge&logoColor=white" alt="Live Demo">
   </a>
 </div>

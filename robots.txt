@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://jkh-ml.github.io/insta-cut/sitemap.xml
+Sitemap: https://jkh-ml.github.io/image-editor/sitemap.xml

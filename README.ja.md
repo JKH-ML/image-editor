@@ -10,7 +10,7 @@
 このツールは、ブラウザ上で即座に動作する包括的な画像編集スイートです。 **MediaPipe AI** と **HTML5 Canvas** を使用しており、すべての処理はデバイス上でローカルに行われます。写真はコンピュータの外に出ることはなく、完全なプライバシーが保証されます。
 
 <div align="center">
-  <a href="https://jkh-ml.github.io/insta-cut/" target="_blank" rel="noopener noreferrer">
+  <a href="https://jkh-ml.github.io/image-editor/" target="_blank" rel="noopener noreferrer">
     <img src="https://img.shields.io/badge/🚀%20今すぐ試す%20Live%20Demo-6366f1?style=for-the-badge&logoColor=white" alt="Live Demo">
   </a>
 </div>
