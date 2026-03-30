@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://jkh-ml.github.io/insta-cut/sitemap.xml

@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Collage Maker | Online Image Editor</title>
+    <script src="coi-serviceworker.js"></script>
+    <link rel="stylesheet" href="style.css">
+    <script src="i18n.js"></script>
+    <!-- Dependencies for Collage -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#18181b',
+                        secondary: '#f4f4f5',
+                        border: '#e4e4e7'
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
+    <style>
+        /* Override tailwind to use our style.css variables */
+        body {
+            background-color: var(--background);
+            color: var(--foreground);
+        }
+        .card-container {
+            background-color: var(--card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+            position: absolute;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transform-origin: center center;
+            cursor: grab;
+            transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+        }
+        .card-container:active { cursor: grabbing; }
+        .card-container.selected {
+            border: 2px solid var(--primary) !important;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15) !important;
+        }
+        .card-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            pointer-events: none;
+        }
+        #cardControlsPanel {
+            position: absolute;
+            z-index: 2100;
+            width: 180px;
+            border: 1px solid var(--border);
+            background: var(--card);
+            color: var(--card-foreground);
+            border-radius: var(--radius);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+        }
+        .collage-workspace {
+            background-color: var(--secondary);
+            background-image: radial-gradient(var(--border) 1px, transparent 1px);
+            background-size: 24px 24px;
+            border: 2px dashed var(--border);
+            border-radius: var(--radius);
+        }
+        .dark-mode .collage-workspace {
+            background-image: radial-gradient(rgba(255,255,255,0.05) 1px, transparent 1px);
+        }
+        
+        /* Aligning button colors with style.css */
+        .btn-zinc-primary {
+            background-color: var(--primary);
+            color: var(--primary-foreground);
+        }
+        .btn-zinc-secondary {
+            background-color: var(--secondary);
+            color: var(--secondary-foreground);
+            border: 1px solid var(--border);
+        }
+        .input-zinc {
+            background-color: var(--background);
+            border: 1px solid var(--border);
+            color: var(--foreground);
+        }
+
+        /* Tooltip behavior */
+        .tooltip-container:hover .tooltip-content {
+            display: block;
+            opacity: 1;
+        }
+        .tooltip-content {
+            display: none;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+    <div class="app-container mx-auto px-4 py-8">
+        <header>
+            <div class="header-top">
+                <div class="header-left">
+                    <a href="index.html" class="btn-home" title="Home">🏠</a>
+                    <h1 data-i18n="title">Image Editor</h1>
+                </div>
+                <div class="header-right">
+                    <button id="theme-toggle" class="theme-toggle" title="Toggle Theme">🌓</button>
+                    <select id="lang-selector" class="lang-selector">
+                        <option value="ko">한국어</option>
+                        <option value="en">English</option>
+                        <option value="zh">中文</option>
+                        <option value="ja">日本語</option>
+                    </select>
+                </div>
+            </div>
+            <nav class="nav-menu">
+                <a href="index.html" class="nav-link" data-i18n="filter">Filter</a>
+                <a href="bg-remove.html" class="nav-link" data-i18n="bg_remove">Background Removal</a>
+                <a href="crop.html" class="nav-link" data-i18n="crop">Crop</a>
+                <a href="merge.html" class="nav-link" data-i18n="merge">Merge</a>
+                <a href="collage.html" class="nav-link active" data-i18n="collage">Collage</a>
+            </nav>
+            <div id="status" class="status-badge" data-i18n="status_ready">Ready</div>
+        </header>
+
+        <main id="pageContainer" class="mt-8 flex flex-col gap-4 relative">
+            <!-- Collage Controls -->
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-2">
+                <div class="flex gap-2">
+                    <button id="addCard" class="btn-zinc-primary flex items-center gap-2 px-4 h-10 rounded-lg font-medium transition-all">
+                        <span class="material-symbols-outlined text-lg">add_photo_alternate</span>
+                        <span class="text-sm">Add Photos</span>
+                    </button>
+                    <button id="clearAll" class="btn-zinc-secondary flex items-center gap-2 px-4 h-10 rounded-lg font-medium transition-all hover:bg-red-50 dark:hover:bg-red-950 hover:text-red-600 border-zinc-200 dark:border-zinc-800">
+                        <span class="material-symbols-outlined text-lg">delete_sweep</span>
+                        <span class="text-sm">Clear All</span>
+                    </button>
+                </div>
+                <div class="relative tooltip-container">
+                    <div class="flex items-center justify-center w-10 h-10 rounded-full bg-white border border-zinc-300 text-zinc-600 cursor-help transition-all hover:bg-zinc-50 shadow-sm">
+                        <span class="material-symbols-outlined text-xl">help</span>
+                    </div>
+                    <!-- Always White Tooltip Card -->
+                    <div class="tooltip-content absolute right-0 bottom-full mb-3 w-64 p-4 bg-white border border-zinc-300 text-zinc-700 text-xs rounded-lg shadow-2xl z-[3000]">
+                        <div class="flex items-center gap-2 mb-2 font-bold text-zinc-900">
+                            <span class="material-symbols-outlined text-sm">content_cut</span>
+                            <span>Save Instruction</span>
+                        </div>
+                        <p class="leading-relaxed mb-3">To save: Press <b class="text-zinc-900">Win + Shift + S</b> to capture your screen!</p>
+                        <div class="flex items-center gap-2 text-[10px] text-zinc-500 border-t border-zinc-100 pt-2">
+                            <span class="material-symbols-outlined text-xs">info</span>
+                            <span>Hint: Mouse wheel to rotate photos</span>
+                        </div>
+                        <!-- Tooltip Arrow -->
+                        <div class="absolute top-full right-4 border-8 border-transparent border-t-white"></div>
+                        <div class="absolute top-full right-4 border-[9px] border-transparent border-t-zinc-300 -z-10 -mt-[1px]"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card Edit Panel (Floating) -->
+            <div id="cardControlsPanel" class="hidden p-4 space-y-4">
+                <div class="flex justify-between items-center border-b border-zinc-100 dark:border-zinc-800 pb-2">
+                    <span class="text-[10px] font-bold uppercase tracking-wider text-zinc-400">Edit Photo</span>
+                    <button id="closePanelBtn" class="text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors">
+                        <span class="material-symbols-outlined text-sm">close</span>
+                    </button>
+                </div>
+                <div class="space-y-3">
+                    <div class="flex items-center justify-between">
+                        <label for="cardAspectToggle" class="text-xs font-medium">Landscape</label>
+                        <input type="checkbox" id="cardAspectToggle" class="w-4 h-4 rounded border-zinc-300">
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <label for="cardSizeInput" class="text-xs font-medium">Size (px)</label>
+                        <input type="number" id="cardSizeInput" min="50" max="1000" class="input-zinc w-20 px-2 py-1 rounded text-xs focus:ring-1 focus:ring-zinc-400 outline-none">
+                    </div>
+                </div>
+                <button id="deleteCardBtn" class="w-full flex items-center justify-center gap-2 py-2 rounded-md text-red-500 hover:bg-red-50 dark:hover:bg-red-950 text-xs font-medium transition-all">
+                    <span class="material-symbols-outlined text-sm">delete</span>
+                    <span>Remove Photo</span>
+                </button>
+            </div>
+
+            <!-- Main Workspace -->
+            <div id="cardsContainer" class="collage-workspace relative w-full h-[600px] shadow-inner overflow-hidden">
+                <div id="empty-hint" class="absolute inset-0 flex flex-col items-center justify-center text-zinc-400 dark:text-zinc-600 pointer-events-none transition-opacity duration-300">
+                    <span class="material-symbols-outlined text-6xl mb-4">dashboard_customize</span>
+                    <p class="text-lg font-medium">Add photos to start your collage</p>
+                    <p class="text-sm">Hint: Use mouse wheel to rotate images</p>
+                </div>
+            </div>
+
+            <!-- Hidden Inputs -->
+            <input type="file" id="fileInput" accept="image/*" class="hidden" multiple>
+        </main>
+
+        <footer>
+            <a href="https://github.com/JKH-ML/insta-cut" target="_blank" class="btn-repo">
+                <svg viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+                <span data-i18n="repo">GitHub Repository</span>
+            </a>
+        </footer>
+    </div>
+    <script src="collage.js"></script>
+</body>
+</html>
