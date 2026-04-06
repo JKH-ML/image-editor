@@ -172,7 +172,14 @@ footer {
     margin-top: 60px;
     padding-top: 24px;
     border-top: 1px solid var(--border);
-    text-align: center;
+}
+
+.footer-links {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
 }
 
 .btn-repo {
@@ -198,6 +205,11 @@ footer {
     width: 16px;
     height: 16px;
     fill: currentColor;
+}
+
+.btn-icon {
+    font-size: 1.1rem;
+    line-height: 1;
 }
 
 h1 {

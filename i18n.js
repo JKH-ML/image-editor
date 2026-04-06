@@ -174,6 +174,8 @@ const translations = {
         title: "画像エ디터",
         home: "ホーム",
         repo: "GitHub リポジトリ",
+        video_editor: "ビデオエディター",
+        audio_editor: "オーディオエディター",
         meta_title: "온라인 이미지 에디터 | 빠르고 안전한 브라우저 기반 편집기",
         meta_description: "브라우저에서 직접 이미지를 편집, 크롭하고 필터를 적용하세요. 서버 업로드 없이 100% 프라이버시가 보장되는 Canvas 기반 편집기입니다.",
         filter: "필터",
