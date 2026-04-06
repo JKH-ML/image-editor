@@ -3,10 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Image Merge | Online Image Editor</title>
+    <title>GIF Maker | Online Image Editor</title>
     <script src="coi-serviceworker.js"></script>
     <link rel="stylesheet" href="style.css">
     <script src="i18n.js"></script>
+    <!-- gifshot for client-side GIF generation -->
+    <script src="https://cdn.jsdelivr.net/npm/gifshot@0.4.5/dist/gifshot.min.js" crossorigin="anonymous"></script>
     <style>
         .file-list {
             list-style: none;
@@ -79,6 +81,23 @@
             padding: 20px;
             font-size: 0.875rem;
         }
+        .preview-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 300px;
+            background: var(--secondary);
+            border-radius: var(--radius);
+            overflow: hidden;
+        }
+        .preview-gif {
+            max-width: 100%;
+            max-height: 500px;
+            object-fit: contain;
+        }
+        .progress-section {
+            margin-top: 20px;
+        }
     </style>
 </head>
 <body>
@@ -103,9 +122,9 @@
                 <a href="index.html" class="nav-link" data-i18n="filter">Filter</a>
                 <a href="bg-remove.html" class="nav-link" data-i18n="bg_remove">Background Removal</a>
                 <a href="crop.html" class="nav-link" data-i18n="crop">Crop</a>
-                <a href="merge.html" class="nav-link active" data-i18n="merge">Merge</a>
+                <a href="merge.html" class="nav-link" data-i18n="merge">Merge</a>
                 <a href="collage.html" class="nav-link" data-i18n="collage">Collage</a>
-                <a href="gif.html" class="nav-link" data-i18n="gif">GIF Maker</a>
+                <a href="gif.html" class="nav-link active" data-i18n="gif">GIF Maker</a>
             </nav>
             <div id="status" class="status-badge" data-i18n="status_ready">Ready</div>
         </header>
@@ -115,16 +134,16 @@
                 <input type="file" id="uploader" accept="image/*" multiple class="hidden">
                 <div class="upload-content">
                     <span class="upload-icon">↑</span>
-                    <p class="upload-label" data-i18n="upload_label_merge">Select images to merge (Multiple allowed)</p>
+                    <p class="upload-label" data-i18n="upload_label_gif">Select images for GIF (Multiple allowed)</p>
                 </div>
             </section>
 
             <section id="editor-container" class="editor-main hidden">
-                <div class="controls-grid" style="grid-template-columns: 1fr;">
-                    <!-- Merge List Card -->
+                <div class="controls-grid">
+                    <!-- GIF List Card -->
                     <div class="card">
                         <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
-                            <h3 class="card-title" data-i18n="merge_list_title">Merge List</h3>
+                            <h3 class="card-title" data-i18n="merge_list_title">Frame List</h3>
                             <button id="clear-list-btn" class="btn-outline" style="height: 28px; padding: 0 10px; font-size: 0.75rem;" data-i18n="clear_list_btn">Clear All</button>
                         </div>
                         <div class="card-content">
@@ -133,21 +152,32 @@
                             </ul>
                             <div id="no-files-msg" class="empty-msg" data-i18n="no_files_msg">No files selected.</div>
                             
-                            <button id="add-more-btn" class="btn-secondary btn-full" style="margin-top: 16px;">+ Add More Files</button>
+                            <button id="add-more-btn" class="btn-secondary btn-full" style="margin-top: 16px;">+ Add More Frames</button>
                         </div>
                     </div>
 
-                    <!-- Merge Settings Card -->
+                    <!-- GIF Settings Card -->
                     <div class="card">
                         <div class="card-header">
-                            <h3 class="card-title" data-i18n="merge_direction">Merge Direction</h3>
+                            <h3 class="card-title" data-i18n="gif_settings_title">GIF Settings</h3>
                         </div>
                         <div class="card-content">
-                            <div class="radio-group">
-                                <label class="radio-item"><input type="radio" name="direction" value="horizontal" checked> <span data-i18n="horizontal">Horizontal</span></label>
-                                <label class="radio-item"><input type="radio" name="direction" value="vertical"> <span data-i18n="vertical">Vertical</span></label>
-                                <label class="radio-item"><input type="radio" name="direction" value="grid"> <span data-i18n="grid">Grid</span></label>
+                            <div class="filter-controls">
+                                <div class="input-box">
+                                    <label data-i18n="gif_speed">Frame Delay (ms)</label>
+                                    <input type="range" id="gif-delay" min="10" max="1000" value="200">
+                                    <div class="flex justify-between text-[10px] mt-1 text-muted-foreground">
+                                        <span>10ms (Fast)</span>
+                                        <span id="delay-val">200ms</span>
+                                        <span>1000ms (Slow)</span>
+                                    </div>
+                                </div>
+                                <div class="input-box">
+                                    <label data-i18n="gif_loop">Loop Count (0 for infinite)</label>
+                                    <input type="number" id="gif-loop" min="0" max="100" value="0">
+                                </div>
                             </div>
+                            <p class="text-xs text-muted-foreground mt-4" data-i18n="gif_save_tip">Tip: More frames may increase processing time.</p>
                         </div>
                     </div>
 
@@ -157,22 +187,35 @@
                             <h3 class="card-title" data-i18n="actions_title">Actions</h3>
                         </div>
                         <div class="card-content action-card-content">
-                            <div class="setting-row" style="flex-direction: column; align-items: flex-start;">
-                                <span class="setting-label" data-i18n="format_label">Export Format</span>
-                                <div class="radio-group">
-                                    <label class="radio-item"><input type="radio" name="format" value="png" checked> PNG</label>
-                                    <label class="radio-item"><input type="radio" name="format" value="jpeg"> JPG</label>
-                                    <label class="radio-item"><input type="radio" name="format" value="webp"> WebP</label>
-                                </div>
-                            </div>
-                            <button id="export-btn" class="btn-primary btn-full" data-i18n="merge_btn">Merge Images</button>
+                            <button id="make-gif-btn" class="btn-primary btn-full" data-i18n="make_gif_btn">Make GIF</button>
                         </div>
                     </div>
                 </div>
 
-                <!-- Download -->
-                <div id="download-container" class="download-section hidden">
-                    <a id="download-link" href="#" download="merged.png" class="btn-download" data-i18n="download_btn">Download Result</a>
+                <!-- Preview Card -->
+                <div id="preview-section" class="card hidden" style="margin-top: 20px;">
+                    <div class="card-header">
+                        <h3 class="card-title" data-i18n="preview_gif_title">GIF Preview</h3>
+                    </div>
+                    <div class="card-content">
+                        <div class="preview-container">
+                            <img id="gif-preview" class="preview-gif" alt="GIF Preview">
+                        </div>
+                        <div class="button-group" style="margin-top: 16px;">
+                            <a id="download-link" href="#" download="animation.gif" class="btn-download btn-full" data-i18n="download_btn">Download GIF</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Progress -->
+                <div id="progress-container" class="progress-section hidden">
+                    <div class="progress-info">
+                        <span id="progress-text">Creating GIF...</span>
+                        <span id="progress-percent">Processing</span>
+                    </div>
+                    <div class="progress-bar-bg">
+                        <div id="progress-fill" class="progress-fill" style="width: 50%;"></div>
+                    </div>
                 </div>
             </section>
 
@@ -184,6 +227,6 @@
             </a>
         </footer>
     </div>
-    <script src="merge.js"></script>
+    <script src="gif.js"></script>
 </body>
 </html>

@@ -10,10 +10,12 @@ const translations = {
         crop: "크롭",
         merge: "병합",
         collage: "콜라주",
+        gif: "GIF 메이커",
         status_ready: "준비 완료: 파일을 선택하세요.",
         upload_label_img: "클릭하거나 이미지를 드래그하세요",
         upload_label_crop: "크롭할 이미지를 클릭하거나 드래그하세요",
         upload_label_merge: "병합할 이미지 파일들을 선택하세요 (여러 개 가능)",
+        upload_label_gif: "GIF로 만들 이미지 파일들을 선택하세요 (여러 개 가능)",
         filters_title: "필터 및 조정",
         brightness: "밝기",
         contrast: "대비",
@@ -45,6 +47,13 @@ const translations = {
         horizontal: "가로",
         vertical: "세로",
         grid: "그리드",
+        // GIF
+        gif_settings_title: "GIF 설정",
+        gif_speed: "프레임 지연 (ms)",
+        gif_loop: "반복 재생",
+        make_gif_btn: "GIF 만들기",
+        preview_gif_title: "GIF 미리보기",
+        gif_save_tip: "팁: 프레임이 많을수록 생성 시간이 길어질 수 있습니다.",
         collage_save_tip: "저장하려면: Win + Shift + S 를 눌러 화면을 캡처하세요!"
     },
     en: {
@@ -58,10 +67,12 @@ const translations = {
         crop: "Crop",
         merge: "Merge",
         collage: "Collage",
+        gif: "GIF Maker",
         status_ready: "Ready: Select a file.",
         upload_label_img: "Click or drag to upload image",
         upload_label_crop: "Click or drag to upload image for cropping",
         upload_label_merge: "Select image files for merging (multiple possible)",
+        upload_label_gif: "Select image files for GIF (multiple possible)",
         filters_title: "Filters & Adjust",
         brightness: "Brightness",
         contrast: "Contrast",
@@ -93,6 +104,13 @@ const translations = {
         horizontal: "Horizontal",
         vertical: "Vertical",
         grid: "Grid",
+        // GIF
+        gif_settings_title: "GIF Settings",
+        gif_speed: "Frame Delay (ms)",
+        gif_loop: "Loop Count",
+        make_gif_btn: "Make GIF",
+        preview_gif_title: "GIF Preview",
+        gif_save_tip: "Tip: More frames may increase processing time.",
         collage_save_tip: "To save: Press Win + Shift + S to capture your screen!"
     },
     zh: {
@@ -106,10 +124,12 @@ const translations = {
         crop: "裁剪",
         merge: "合并",
         collage: "拼贴",
+        gif: "GIF 制作",
         status_ready: "准备就绪：请选择文件。",
         upload_label_img: "点击或拖拽上传图像",
         upload_label_crop: "点击或拖拽上传图像进行裁剪",
         upload_label_merge: "选择要合并的图像文件（可多选）",
+        upload_label_gif: "选择要制作 GIF 的图像文件（可多选）",
         filters_title: "滤镜与调整",
         brightness: "亮度",
         contrast: "对比度",
@@ -141,6 +161,13 @@ const translations = {
         horizontal: "水平",
         vertical: "垂直",
         grid: "网格",
+        // GIF
+        gif_settings_title: "GIF 设置",
+        gif_speed: "帧延迟 (ms)",
+        gif_loop: "循环次数",
+        make_gif_btn: "制作 GIF",
+        preview_gif_title: "GIF 预览",
+        gif_save_tip: "提示：帧数越多，生成时间可能越长。",
         collage_save_tip: "保存方法：按下 Win + Shift + S 截屏保存！"
     },
     ja: {
@@ -154,10 +181,12 @@ const translations = {
         crop: "크롭",
         merge: "병합",
         collage: "콜라주",
+        gif: "GIFメーカー",
         status_ready: "준비 완료: 파일을 선택하세요.",
         upload_label_img: "클릭하거나 이미지를 드래그하세요",
         upload_label_crop: "크롭할 이미지를 클릭하거나 드래그하세요",
         upload_label_merge: "병합할 이미지 파일들을 선택하세요 (여러 개 가능)",
+        upload_label_gif: "GIFを作成する画像ファイルを選択してください (複数可)",
         filters_title: "필터 및 조정",
         brightness: "밝기",
         contrast: "대비",
@@ -189,6 +218,13 @@ const translations = {
         horizontal: "가로",
         vertical: "세로",
         grid: "그리드",
+        // GIF
+        gif_settings_title: "GIF設定",
+        gif_speed: "フレーム遅延 (ms)",
+        gif_loop: "ループ回数",
+        make_gif_btn: "GIFを作成する",
+        preview_gif_title: "GIFプレビュー",
+        gif_save_tip: "ヒント：フレーム数が多いほど、生成に時間がかかる場合があります。",
         collage_save_tip: "保存するには：Win + Shift + S を押してスクリーンショットを撮ってください！"
     }
 };

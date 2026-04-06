@@ -1,4 +1,4 @@
-# 🖼️ Online Image Editor (v2.1.0)
+# 🖼️ Online Image Editor (v2.2.0)
 
 **Fast, AI-Powered, and 100% Private Browser-based Image Editor.**
 
@@ -21,6 +21,7 @@ This tool is a comprehensive image editing suite that runs entirely in your brow
 
 - **🤖 AI Background Removal**: Remove backgrounds instantly using Google's MediaPipe Selfie Segmentation. High-quality edges with professional feathering.
 - **🎨 Filters & Adjustments**: Micro-adjust Brightness, Contrast, Saturation, and Blur with real-time preview.
+- **🎞️ Animated GIF Maker**: Create high-quality animated GIFs from multiple images. Adjustable frame delay and loop settings.
 - **🧩 Freeform Collage**: Arrange multiple photos freely. Rotate with mouse wheel, resize, and layer images to create your own unique composition.
 - **✂️ Precise Crop**: Free-form cropping or use standard presets (1:1, 4:3, 16:9).
 - **🔗 Image Merge**: Combine multiple images into a single file horizontally, vertically, or in a grid.
@@ -30,7 +31,7 @@ This tool is a comprehensive image editing suite that runs entirely in your brow
 ## 🛠️ Tech Stack
 
 - **AI Engine**: MediaPipe Selfie Segmentation
-- **Core**: HTML5 Canvas API
+- **Core**: HTML5 Canvas API, gifshot.js
 - **Styling**: CSS3 (Custom Variables), Tailwind CSS
 - **Framework**: Vanilla JavaScript (ES6+)
 - **Deployment**: GitHub Pages (Serverless)
@@ -39,14 +40,24 @@ This tool is a comprehensive image editing suite that runs entirely in your brow
 
 1.  **Filter**: Upload an image and use sliders to enhance your photo.
 2.  **Background Removal**: Go to the 'Background Removal' tab, upload, and click the AI button to get a transparent PNG.
-3.  **Collage**: 
+3.  **GIF Maker**:
+    - Select multiple images in the 'GIF Maker' tab.
+    - Reorder frames using arrow buttons.
+    - Set frame delay (ms) and loop count.
+    - Click 'Make GIF' and download the result.
+4.  **Collage**: 
     - Add multiple photos in the 'Collage' tab.
     - Drag to move, **Scroll mouse wheel to rotate**.
     - Use the settings icon on each photo to resize.
     - Save by capturing your screen (**Win + Shift + S**).
-4.  **Merge/Crop**: Use dedicated tabs for structured editing and combining.
+5.  **Merge/Crop**: Use dedicated tabs for structured editing and combining.
 
 ## 🕒 Version History
+
+### [v2.2.0] - 2026-04-06
+- **✨ New Feature**: Added high-performance Animated GIF Maker.
+- **🚀 Optimization**: Improved memory management and performance across all tools.
+- **🎨 UI/UX**: Enhanced navigation and responsive layout.
 
 ### [v2.1.0] - 2026-03-30
 - **✨ New Feature**: Added high-quality AI Background Removal (MediaPipe).
